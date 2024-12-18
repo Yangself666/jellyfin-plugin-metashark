@@ -94,8 +94,20 @@ namespace Jellyfin.Plugin.MetaShark.Providers
             // 注意：会存在元数据有tmdbId，但metaSource没值的情况（之前由TMDB插件刮削导致）
             var hasTmdbMeta = metaSource == MetaSource.Tmdb && !string.IsNullOrEmpty(tmdbId);
             var hasDoubanMeta = metaSource != MetaSource.Tmdb && !string.IsNullOrEmpty(sid);
-            this.Log($"GetMovieMetadata of [name]: {info.Name} [fileName]: {fileName} metaSource: {metaSource} EnableTmdb: {config.EnableTmdb}");
-            if (!hasDoubanMeta && !hasTmdbMeta)
+            this.Log($"GetMovieMetadata of [name]: {info.Name} [fileName]: {fileName} metaSource: {metaSource} EnableTmdb: {config.EnableTmdb} FirstTmdb: {config.FirstTmdb}");
+            if (!hasDoubanMeta && !hasTmdbMeta && config.FirstTmdb)
+            {
+                // 处理extras影片
+                var extraResult = this.HandleExtraType(info);
+                if (extraResult != null)
+                {
+                    return extraResult;
+                }
+                // 使用tmdb查找信息
+                tmdbId = await this.GuestByTmdbAsync(info, cancellationToken).ConfigureAwait(false);
+                // 来源设置为TMDB
+                metaSource = MetaSource.Tmdb;
+            } else if (!hasDoubanMeta && !hasTmdbMeta)
             {
                 // 处理extras影片
                 var extraResult = this.HandleExtraType(info);
@@ -108,6 +120,7 @@ namespace Jellyfin.Plugin.MetaShark.Providers
                 sid = await this.GuessByDoubanAsync(info, cancellationToken).ConfigureAwait(false);
             }
 
+            // 如果来源不是tmdb 并且有豆瓣ID
             if (metaSource != MetaSource.Tmdb && !string.IsNullOrEmpty(sid))
             {
                 this.Log($"GetMovieMetadata of douban [sid]: \"{sid}\"");

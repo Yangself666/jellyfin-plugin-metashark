@@ -83,6 +83,13 @@
                             <div class="fieldDescription">勾选后，会尝试从TheMovieDb获取剧集元数据</div>
                         </div>
                         <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label" for="FirstTmdb">
+                                <input id="FirstTmdb" name="FirstTmdb" type="checkbox" is="emby-checkbox" />
+                                <span>是否优先从TheMovieDb获取元数据</span>
+                            </label>
+                            <div class="fieldDescription">勾选后，会优先从TheMovieDb获取元数据</div>
+                        </div>
+                        <div class="checkboxContainer checkboxContainer-withDescription">
                             <label class="emby-checkbox-label" for="EnableTmdbSearch">
                                 <input id="EnableTmdbSearch" name="EnableTmdbSearch" type="checkbox"
                                     is="emby-checkbox" />
@@ -185,6 +192,7 @@
                         document.querySelector('#EnableDoubanBackdropRaw').checked = config.EnableDoubanBackdropRaw;
 
                         document.querySelector('#EnableTmdb').checked = config.EnableTmdb;
+                        document.querySelector('#FirstTmdb').checked = config.FirstTmdb;
                         document.querySelector('#EnableTmdbSearch').checked = config.EnableTmdbSearch;
                         document.querySelector('#EnableTmdbBackdrop').checked = config.EnableTmdbBackdrop;
                         document.querySelector('#EnableTmdbLogo').checked = config.EnableTmdbLogo;
@@ -215,6 +223,7 @@
                         config.EnableDoubanBackdropRaw = document.querySelector('#EnableDoubanBackdropRaw').checked;
 
                         config.EnableTmdb = document.querySelector('#EnableTmdb').checked;
+                        config.FirstTmdb = document.querySelector('#FirstTmdb').checked;
                         config.EnableTmdbSearch = document.querySelector('#EnableTmdbSearch').checked;
                         config.EnableTmdbBackdrop = document.querySelector('#EnableTmdbBackdrop').checked;
                         config.EnableTmdbLogo = document.querySelector('#EnableTmdbLogo').checked;

@@ -333,6 +333,72 @@ namespace Jellyfin.Plugin.MetaShark.Providers
             return null;
         }
 
+        protected async Task<string?> GuestByTmdbAsync(ItemLookupInfo info, CancellationToken cancellationToken)
+        {
+            var fileName = GetOriginalFileName(info);
+            var parseResult = NameParser.Parse(fileName);
+            var searchName = !string.IsNullOrEmpty(parseResult.ChineseName) ? parseResult.ChineseName : parseResult.Name;
+            info.Year = parseResult.Year;  // 默认parser对anime年份会解析出错，以anitomy为准
+            this.Log($"GuessByTmdb of [name]: {info.Name} [file_name]: {fileName} [year]: {info.Year} [search name]: {searchName}");
+            var name = searchName;
+            var year = parseResult.Year;
+            switch (info)
+            {
+                case MovieInfo:
+                    var movieResults = await this._tmdbApi.SearchMovieAsync(name, year ?? 0, info.MetadataLanguage, cancellationToken).ConfigureAwait(false);
+                    // 结果可能多个，优先取名称完全相同的
+                    var movieItem = movieResults.Where(x => x.Title == name || x.OriginalTitle == name).FirstOrDefault();
+                    if (movieItem != null)
+                    {
+                        this.Log($"Found tmdb [id]: {movieItem.Title}({movieItem.Id})");
+                        return movieItem.Id.ToString(CultureInfo.InvariantCulture);
+                    }
+                    movieItem = movieResults.FirstOrDefault();
+                    if (movieItem != null)
+                    {
+                        // bt种子都是英文名，但电影是中日韩泰印法地区时，都不适用相似匹配，去掉限制
+                        this.Log($"Found tmdb [id]: {movieItem.Title}({movieItem.Id})");
+                        return movieItem.Id.ToString(CultureInfo.InvariantCulture);
+                    }
+                    break;
+                case SeriesInfo:
+                    var seriesResults = await this._tmdbApi.SearchSeriesAsync(name, info.MetadataLanguage, cancellationToken).ConfigureAwait(false);
+                    // 年份在豆瓣可能匹配到第三季，但tmdb年份都是第一季的，可能匹配不上（例如：脱口秀大会）
+                    // 优先年份和名称同时匹配
+                    var seriesItem = seriesResults.Where(x => (x.Name == name || x.OriginalName == name) && x.FirstAirDate?.Year == year).FirstOrDefault();
+                    if (seriesItem != null)
+                    {
+                        this.Log($"Found tmdb [id]: -> {seriesItem.Name}({seriesItem.Id})");
+                        return seriesItem.Id.ToString(CultureInfo.InvariantCulture);
+                    }
+                    // 年份匹配
+                    seriesItem = seriesResults.Where(x => x.FirstAirDate?.Year == year).FirstOrDefault();
+                    if (seriesItem != null)
+                    {
+                        this.Log($"Found tmdb [id]: -> {seriesItem.Name}({seriesItem.Id})");
+                        return seriesItem.Id.ToString(CultureInfo.InvariantCulture);
+                    }
+                    // 取名称完全相同的，可能综艺会有纯享版等非标准版本(例如：一年一度喜剧大赛)
+                    seriesItem = seriesResults.Where(x => x.Name == name || x.OriginalName == name).FirstOrDefault();
+                    if (seriesItem != null)
+                    {
+                        this.Log($"Found tmdb [id]: -> {seriesItem.Name}({seriesItem.Id})");
+                        return seriesItem.Id.ToString(CultureInfo.InvariantCulture);
+                    }
+                    seriesItem = seriesResults.FirstOrDefault();
+                    if (seriesItem != null)
+                    {
+                        // bt种子都是英文名，但电影是中日韩泰印法地区时，都不适用相似匹配，去掉限制
+                        this.Log($"Found tmdb [id]: -> {seriesItem.Name}({seriesItem.Id})");
+                        return seriesItem.Id.ToString(CultureInfo.InvariantCulture);
+                    }
+                    break;
+            }
+
+            this.Log($"Not found tmdb id by [name]: {name} [year]: {year}");
+            return null;
+        }
+
 
         protected async Task<string?> GetTmdbIdByImdbAsync(string imdb, string language, ItemLookupInfo info, CancellationToken cancellationToken)
         {

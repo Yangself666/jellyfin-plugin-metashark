@@ -44,7 +44,11 @@ namespace Jellyfin.Plugin.MetaShark.Providers
         {
             var sid = item.GetProviderId(DoubanProviderId);
             var metaSource = item.GetMetaSource(Plugin.ProviderId);
-            this.Log($"GetImages for item: {item.Name} [metaSource]: {metaSource}");
+            this.Log($"GetImages for item: {item.Name} [metaSource]: {metaSource} FirstTmdb: {config.FirstTmdb}");
+            if (config.FirstTmdb)
+            {
+                metaSource = MetaSource.Tmdb;
+            }
             if (metaSource != MetaSource.Tmdb && !string.IsNullOrEmpty(sid))
             {
                 var primary = await this._doubanApi.GetMovieAsync(sid, cancellationToken).ConfigureAwait(false);
@@ -138,6 +142,11 @@ namespace Jellyfin.Plugin.MetaShark.Providers
             var tmdbId = item.GetProviderId(MetadataProvider.Tmdb);
             var list = new List<RemoteImageInfo>();
 
+            if (config.FirstTmdb)
+            {
+                sid = "";
+            }
+
             // 从豆瓣获取背景图
             if (!string.IsNullOrEmpty(sid))
             {
@@ -174,7 +183,7 @@ namespace Jellyfin.Plugin.MetaShark.Providers
             }
 
             // 添加 TheMovieDb 背景图为备选
-            if (config.EnableTmdbBackdrop && !string.IsNullOrEmpty(tmdbId))
+            if ((config.FirstTmdb || config.EnableTmdbBackdrop) && !string.IsNullOrEmpty(tmdbId))
             {
                 var language = item.GetPreferredMetadataLanguage();
                 var movie = await _tmdbApi

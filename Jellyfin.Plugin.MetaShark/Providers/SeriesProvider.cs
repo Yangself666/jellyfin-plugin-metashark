@@ -88,8 +88,14 @@ namespace Jellyfin.Plugin.MetaShark.Providers
             // 注意：会存在元数据有tmdbId，但metaSource没值的情况（之前由TMDB插件刮削导致）
             var hasTmdbMeta = metaSource == MetaSource.Tmdb && !string.IsNullOrEmpty(tmdbId);
             var hasDoubanMeta = metaSource != MetaSource.Tmdb && !string.IsNullOrEmpty(sid);
-            this.Log($"GetSeriesMetadata of [name]: {info.Name} [fileName]: {fileName} metaSource: {metaSource} EnableTmdb: {config.EnableTmdb}");
-            if (!hasDoubanMeta && !hasTmdbMeta)
+            this.Log($"GetSeriesMetadata of [name]: {info.Name} [fileName]: {fileName} metaSource: {metaSource} EnableTmdb: {config.EnableTmdb} FirstTmdb: {config.FirstTmdb}");
+            if (!hasDoubanMeta && !hasTmdbMeta && config.FirstTmdb)
+            {
+                // 使用tmdb查找信息
+                tmdbId = await this.GuestByTmdbAsync(info, cancellationToken).ConfigureAwait(false);
+                // 来源设置为TMDB
+                metaSource = MetaSource.Tmdb;
+            } else if (!hasDoubanMeta && !hasTmdbMeta)
             {
                 // 自动扫描搜索匹配元数据
                 sid = await this.GuessByDoubanAsync(info, cancellationToken).ConfigureAwait(false);

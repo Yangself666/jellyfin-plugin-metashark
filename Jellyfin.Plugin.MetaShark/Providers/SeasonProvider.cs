@@ -49,7 +49,11 @@ namespace Jellyfin.Plugin.MetaShark.Providers
             var seasonNumber = info.IndexNumber; // S00/Season 00特典目录会为0
             var seasonSid = info.GetProviderId(DoubanProviderId);
             var fileName = Path.GetFileName(info.Path);
-            this.Log($"GetSeasonMetaData of [name]: {info.Name} [fileName]: {fileName} number: {info.IndexNumber} seriesTmdbId: {seriesTmdbId} sid: {sid} metaSource: {metaSource} EnableTmdb: {config.EnableTmdb}");
+            this.Log($"GetSeasonMetaData of [name]: {info.Name} [fileName]: {fileName} number: {info.IndexNumber} seriesTmdbId: {seriesTmdbId} sid: {sid} metaSource: {metaSource} EnableTmdb: {config.EnableTmdb} FirstTmdb: {config.FirstTmdb}");
+            if (config.FirstTmdb)
+            {
+                metaSource = MetaSource.Tmdb;
+            }
             if (metaSource != MetaSource.Tmdb && !string.IsNullOrEmpty(sid))
             {
                 // seasonNumber 为 null 有三种情况：

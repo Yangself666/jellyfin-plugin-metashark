@@ -45,6 +45,12 @@ namespace Jellyfin.Plugin.MetaShark.Providers
             var series = season.Series;
             var metaSource = series.GetMetaSource(Plugin.ProviderId);
 
+            if (config.FirstTmdb)
+            {
+                // tmdb优先
+                metaSource = MetaSource.Tmdb;
+            }
+
             // get image from douban
             var sid = item.GetProviderId(DoubanProviderId);
             if (metaSource != MetaSource.Tmdb && !string.IsNullOrEmpty(sid))

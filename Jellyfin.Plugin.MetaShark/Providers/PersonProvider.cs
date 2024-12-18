@@ -77,9 +77,12 @@ namespace Jellyfin.Plugin.MetaShark.Providers
         public async Task<MetadataResult<Person>> GetMetadata(PersonLookupInfo info, CancellationToken cancellationToken)
         {
             var result = new MetadataResult<Person>();
-
-            var cid = info.GetProviderId(DoubanProviderId);
-            this.Log($"GetPersonMetadata of [name]: {info.Name} [cid]: {cid}");
+            var cid = "";
+            if (!config.FirstTmdb)
+            {
+                cid = info.GetProviderId(DoubanProviderId);
+                this.Log($"GetPersonMetadata of [name]: {info.Name} [cid]: {cid}");
+            }
             if (!string.IsNullOrEmpty(cid))
             {
 

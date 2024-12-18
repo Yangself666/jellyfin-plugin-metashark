@@ -40,6 +40,11 @@ public class PluginConfiguration : BasePluginConfiguration
     /// 启用获取tmdb元数据
     /// </summary>
     public bool EnableTmdb { get; set; } = true;
+    
+    /// <summary>
+    /// 先从tmdb获取元数据
+    /// </summary>
+    public bool FirstTmdb { get; set; } = true;
 
     /// <summary>
     /// 启用显示tmdb搜索结果
