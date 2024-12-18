@@ -1,0 +1,21 @@
+[
+  {
+    "guid": "2fbb7d5c-493b-4922-84ee-012b810bc93c",
+    "name": "MetaShark",
+    "description": "jellyfin\u7535\u5f71\u5143\u6570\u636e\u63d2\u4ef6\uff0c\u5f71\u7247\u4fe1\u606f\u53ea\u8981\u4ece\u8c46\u74e3\u83b7\u53d6\uff0c\u5e76\u7531TMDB\u8865\u5145\u7f3a\u5931\u7684\u5267\u96c6\u6570\u636e\u3002",
+    "overview": "jellyfin\u7535\u5f71\u5143\u6570\u636e\u63d2\u4ef6",
+    "owner": "Yangself666",
+    "category": "Metadata",
+    "imageUrl": "https://github.com/Yangself666/jellyfin-plugin-metashark/raw/main/doc/logo.png",
+    "versions": [
+      {
+        "version": "2.1.1.0-tmdb",
+        "changelog": "tmdb\u56fe\u7247\u6539\u4f7f\u7528https\u8bf7\u6c42",
+        "targetAbi": "10.9.0.0",
+        "sourceUrl": "https://github.com/Yangself666/jellyfin-plugin-metashark/releases/download/v2.1.1-tmdb/metashark_2.1.1.0_tmdb.zip",
+        "checksum": "526ec0e026c1f9f6e72bf049d15f0097",
+        "timestamp": "2024-12-18T13:11:04"
+      }
+    ]
+  }
+]
