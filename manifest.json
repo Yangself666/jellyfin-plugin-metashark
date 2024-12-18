@@ -9,7 +9,7 @@
     "imageUrl": "https://github.com/Yangself666/jellyfin-plugin-metashark/raw/main/doc/logo.png",
     "versions": [
       {
-        "version": "2.1.1.0-tmdb",
+        "version": "2.1.1.0.0",
         "changelog": "tmdb\u56fe\u7247\u6539\u4f7f\u7528https\u8bf7\u6c42",
         "targetAbi": "10.9.0.0",
         "sourceUrl": "https://github.com/Yangself666/jellyfin-plugin-metashark/releases/download/v2.1.1-tmdb/metashark_2.1.1.0_tmdb.zip",
